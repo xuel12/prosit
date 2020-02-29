@@ -1,4 +1,5 @@
-BASE_PATH = "/Users/xuel12/Documents/MSdatascience/CS7180AI/"
+#BASE_PATH = "/Users/xuel12/Documents/MSdatascience/CS7180AI/"
+BASE_PATH = "/home/xuel12/"
 DATA_PATH = BASE_PATH + "project/data/traintest_hcd.hdf5"
 MODEL_SPECTRA = BASE_PATH+"project/model_spectra/"
 MODEL_IRT = BASE_PATH+"project/model_irt/"
