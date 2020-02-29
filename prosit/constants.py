@@ -1,7 +1,14 @@
-DATA_PATH = "/root/data.hdf5"
-MODEL_SPECTRA = "/root/model_spectra/"
-MODEL_IRT = "/root/model_irt/"
-OUT_DIR = "/root/prediction/"
+BASE_PATH = "/Users/xuel12/Documents/MSdatascience/CS7180AI/"
+DATA_PATH = BASE_PATH + "project/data/traintest_hcd.hdf5"
+MODEL_SPECTRA = BASE_PATH+"project/model_spectra/"
+MODEL_IRT = BASE_PATH+"project/model_irt/"
+OUT_DIR = BASE_PATH+"project/prediction/"
+MODEL_DIR = MODEL_SPECTRA
+
+#DATA_PATH = "/root/data.hdf5"
+#MODEL_SPECTRA = "/root/model_spectra/"
+#MODEL_IRT = "/root/model_irt/"
+#OUT_DIR = "/root/prediction/"
 
 VAL_SPLIT = 0.8
 
