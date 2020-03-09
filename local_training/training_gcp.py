@@ -1,10 +1,10 @@
-import os
-os.chdir('/home/xuel12/prosit/local_training')
-
 import io_local
 import losses
 import model as model_lib
 import constants
+import constants_gcp
+
+import os
 from keras.utils import plot_model
 import matplotlib.pyplot as plt
 import numpy as np
@@ -103,8 +103,9 @@ def train(tensor, model, model_config, callbacks):
         
 if __name__ == "__main__":
     os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"  # turn off tf logging
-    data_path = constants.DATA_PATH
-    model_dir = constants.MODEL_DIR
+    os.chdir(constants_gcp.BASE_PATH + 'project/prosit/local_training')
+    data_path = constants_gcp.DATA_PATH
+    model_dir = constants_gcp.MODEL_DIR
     model, model_config = model_lib.load(model_dir, trained=False)
    
     # create log folder
