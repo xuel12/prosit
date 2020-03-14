@@ -1,9 +1,10 @@
+import os
+os.chdir('/Users/xuel12/Documents/MSdatascience/CS7180AI/project/prosit/local_training')
+import constants
 import io_local
 import losses
 import model as model_lib
-import constants
 
-import os
 from keras.utils import plot_model
 import matplotlib.pyplot as plt
 import numpy as np
