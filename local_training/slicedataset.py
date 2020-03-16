@@ -12,7 +12,7 @@ def slice_hdf5(path, n_samples=None):
     # Get a list of the keys for the datasets
     random.seed(100)
     with h5py.File(path, 'r') as f:
-        with h5py.File('/Users/xuel12/Documents/MSdatascience/CS7180AI/project/data/traintest_hcd_100k.hdf5', 'w') as f2:
+        with h5py.File('/Users/xuel12/Documents/MSdatascience/CS7180AI/project/data/traintest_hcd_1m.hdf5', 'w') as f2:
             print(f.keys())
             dataset_list = list(f.keys())
             
@@ -28,15 +28,15 @@ def slice_hdf5(path, n_samples=None):
                 
                 if (len(f[dset_name].shape) == 2):
 #                    print(f[dset_name][:1, :])
-                    dset = f2.create_dataset(dset_name, shape=(len(idx), f[dset_name].shape[1]), dtype=f[dset_name].dtype)
+                    dset = f2.create_dataset(dset_name, shape=(len(idx), f[dset_name].shape[1]), dtype=f[dset_name].dtype, compression="gzip", compression_opts=9)
                     dset.write_direct(f[dset_name][idx, :])
                 elif (len(f[dset_name].shape) == 3):
 #                    print(f[dset_name][:1, :, :])
-                    dset = f2.create_dataset(dset_name, shape=(len(idx), f[dset_name].shape[1], f[dset_name].shape[2]), dtype=f[dset_name].dtype)
+                    dset = f2.create_dataset(dset_name, shape=(len(idx), f[dset_name].shape[1], f[dset_name].shape[2]), dtype=f[dset_name].dtype, compression="gzip", compression_opts=9)
                     dset.write_direct(f[dset_name][idx, :, :])
                 else:
 #                    print(f[dset_name][:1, ])
-                    dset = f2.create_dataset(dset_name, shape=(len(idx), ), dtype=f[dset_name].dtype)
+                    dset = f2.create_dataset(dset_name, shape=(len(idx), ), dtype=f[dset_name].dtype, compression="gzip", compression_opts=9)
                     dset.write_direct(f[dset_name][idx, ])
             f2.close()
         f.close()
@@ -51,7 +51,7 @@ def slice_hdf5(path, n_samples=None):
 #        print(charge_dset.shape)
     return dataset_list
 
-slice_hdf5('/Users/xuel12/Documents/MSdatascience/CS7180AI/project/data/traintest_hcd.hdf5', n_samples = 100000)
+slice_hdf5('/Users/xuel12/Documents/MSdatascience/CS7180AI/project/data/traintest_hcd.hdf5', n_samples = 1000000)
 
 
 def read_hdf5(path, n_samples=None):
