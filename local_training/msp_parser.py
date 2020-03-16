@@ -285,7 +285,8 @@ def sampling_peptidelist(n_record, ifile, ofile):
             if line !='':
                 peptidelist.append(line.rstrip('\n'))
     peptidelist_nomod = [x for x in peptidelist if re.search('\\(',x) is None]
-    peptidelist_sample = random.sample(peptidelist_nomod, n_record)
+    peptidelist_len = [x for x in peptidelist_nomod if len(x.split('/')[0])<=30]
+    peptidelist_sample = random.sample(peptidelist_len, n_record)
     with open (ofile, 'w') as f:
         f.write('modified_sequence,collision_energy,precursor_charge\n')
         for peptide in peptidelist_sample:
