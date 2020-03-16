@@ -70,7 +70,7 @@ def from_msp_propel(ofile):
         # use the read line to read further.
         # If the file is not empty keep reading one line at a time, till the file is empty
         counter = 0
-        max_count = 100
+        max_count = 10000
         ce = 0
         while (line is not None):
             if not line.strip():
@@ -173,7 +173,7 @@ def copy_from_msp(n_record, file, ofile=None):
                     f2.close()
                 break
         if (sign == 1):
-            print("All processed")
+            print("All {} records processed")
         else:
             print("{} records processed".format(counter))
     return (counter)
@@ -300,19 +300,28 @@ if __name__ == "__main__":
     example_dir = constants.EXAMPLE_DIR
     if not os.path.exists(example_dir):
         os.makedirs(example_dir)
-        
-    n_propel = copy_from_msp(1000000, data_dir+'human_synthetic_hcd_selected.msp', \
-                             example_dir+'human_synthetic_hcd_selected_sub.msp')
-    # n_propel = 700000
     
+    # get smaller set and count records number
+    copy_from_msp(1000, data_dir+'human_synthetic_hcd_selected.msp', example_dir+'human_synthetic_hcd_selected_sub.msp')
+    
+    # get record number
+    n_propel = copy_from_msp(1000000, data_dir+'human_synthetic_hcd_selected.msp')
+    # n_propel = 1000000
+    
+    # store msp files to dictionary from prosit prediction
     spectrum_prosit = from_msp_prosit(example_dir+'peptidelist.msp')
     dict2mgf(spectrum_prosit, example_dir+'peptidelist.mgf')
     
-    peptidelist_propel1 = msp2mgf(n_propel, data_dir+'human_synthetic_hcd_selected.msp',\
-                                 example_dir+'human_synthetic_hcd_selected.mgf', \
-                                 example_dir+'peptidelist_library.txt')
+    # # OPTION 1: when msp size is small (limiting to 10000 records)
+    # spectrum_propel = from_msp_propel(data_dir+'human_synthetic_hcd_selected.msp')
+    # dict2mgf(spectrum_propel, example_dir+'human_synthetic_hcd_selected.mgf')
 
-    peptidelist_propel_sample = sampling_peptidelist(100, example_dir+'peptidelist_library.txt', \
+    # OPTION 2: transform full msp directly to mgf
+    peptidelist_propel = msp2mgf(n_propel+1000, data_dir+'human_synthetic_hcd_selected.msp',\
+                                 data_dir+'human_synthetic_hcd_selected.mgf', \
+                                 data_dir+'peptidelist_library.txt')
+
+    peptidelist_propel_sample = sampling_peptidelist(100, data_dir+'peptidelist_library.txt', \
                                                      example_dir+'peptidelist.csv')       
             
             
