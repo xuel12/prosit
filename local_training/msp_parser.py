@@ -31,6 +31,7 @@ def from_msp_prosit(ofile):
             line = f.readline()
         elif re.search("^Comment",line) is not None:
             tmp_dict['Comment'] = re.sub('Comment: ','',line.rstrip('\n'))
+            tmp_dict['Comment'] = re.sub('; ',';',tmp_dict['Comment'])
             tmpline = tmp_dict['Comment'].split(' ')
             parent, ce, mod, modseq = [x.split('=')[1] for x in tmpline]
             ce = round(float(ce),1)
@@ -283,7 +284,7 @@ def sampling_peptidelist(n_record, ifile, ofile):
         for line in f1:
             if line !='':
                 peptidelist.append(line.rstrip('\n'))
-    peptidelist_nomod = [x for x in peptidelist if re.search('/',x) is not None]
+    peptidelist_nomod = [x for x in peptidelist if re.search('\\(',x) is None]
     peptidelist_sample = random.sample(peptidelist_nomod, n_record)
     with open (ofile, 'w') as f:
         f.write('modified_sequence,collision_energy,precursor_charge\n')

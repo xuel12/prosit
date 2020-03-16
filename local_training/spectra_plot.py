@@ -13,6 +13,7 @@ import spectrum_utils.spectrum as sus
 from pyteomics import mgf
 import numpy as np
 import constants
+import msp_parser
 
 ##### single plot
 def singleplot(feature, file):
@@ -103,10 +104,13 @@ def mirroplot_twosets(peplist, pred_file, ref_file, plot_dir):
     min_intensity = 0.01
     fragment_tol_mass = 0.5
     fragment_tol_mode = 'Da'
+    title = peplist[4]
     for title in peplist:
         spectra = []
-        pred_dict = mgf.get_spectrum(pred_file, title)
-        ref_dict = mgf.get_spectrum(ref_file, title)
+        pred_dict = mgf.get_spectrum(example_dir+'peptidelist_pred.mgf', title)
+        ref_dict = mgf.get_spectrum(data_dir+'human_synthetic_hcd_selected.mgf', title)
+        if (ref_dict is None):
+            break
         pair = [pred_dict, ref_dict]
         for spectrum_dict in pair:
             identifier = spectrum_dict['params']['title']
@@ -159,14 +163,18 @@ if __name__ == "__main__":
         os.makedirs(plot_dir)
     
     # get list of peptides for plotting
-    peplist = peplist_from_csv(example_dir + '/peptidelist.csv')[:5]
+    peplist = peplist_from_csv(example_dir + '/peptidelist.csv')
 
+    # store msp files to dictionary from prosit prediction
+    spectrum_prosit = msp_parser.from_msp_prosit(example_dir+'peptidelist_pred.msp')
+    msp_parser.dict2mgf(spectrum_prosit, example_dir+'peptidelist_pred.mgf')
+    
     # single spectra
-    singleplot(peplist[0], example_dir+'peptidelist.mgf')
+    singleplot(peplist[0], example_dir+'peptidelist_pred.mgf')
     # compare two different peptides
-    mirroplot_twopeptides(peplist, example_dir+'peptidelist.mgf')
+    mirroplot_twopeptides(peplist[:2], example_dir+'peptidelist_pred.mgf')
     # compare same peptide from two methods
-    mirroplot_twosets(peplist, example_dir+'peptidelist.mgf', example_dir+'human_synthetic_hcd_selected.mgf', plot_dir)
+    mirroplot_twosets(peplist, example_dir+'peptidelist_pred.mgf', data_dir+'human_synthetic_hcd_selected.mgf', plot_dir)
         
 
         
