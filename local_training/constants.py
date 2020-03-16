@@ -8,7 +8,6 @@ MODEL_DIR = MODEL_SPECTRA
 EXAMPLE_DIR = BASE_PATH + "project/examples/"
 PLOT_DIR = BASE_PATH + "project/examples/plot"
 
-
 #DATA_PATH = "/root/data.hdf5"
 #MODEL_SPECTRA = "/root/model_spectra/"
 #MODEL_IRT = "/root/model_irt/"
