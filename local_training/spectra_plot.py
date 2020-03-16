@@ -6,12 +6,13 @@ Created on Fri Mar 13 22:50:49 2020
 @author: xuel12
 """
 import os
-os.chdir('/Users/xuel12/Documents/MSdatascience/CS7180AI/project/prosit/')
+os.chdir('/Users/xuel12/Documents/MSdatascience/CS7180AI/project/prosit/local_training')
 import matplotlib.pyplot as plt
 import spectrum_utils.plot as sup
 import spectrum_utils.spectrum as sus
 from pyteomics import mgf
 import numpy as np
+import constants
 
 ##### single plot
 
@@ -88,3 +89,69 @@ spectrum_top, spectrum_bottom = spectra
 sup.mirror(spectrum_top, spectrum_bottom, ax=ax)
 plt.show()
 plt.close()
+
+
+##### mirror plot for two dataset
+def mirroplot_twosets(peplist, pred_file, ref_file, plot_dir):
+    for title in peplist:
+        spectra = []
+        pred_dict = mgf.get_spectrum(pred_file, title)
+        ref_dict = mgf.get_spectrum(ref_file, title)
+        pair = [pred_dict, ref_dict]
+        for spectrum_dict in pair:
+            identifier = spectrum_dict['params']['title']
+            precursor_mz = spectrum_dict['params']['pepmass'][0]
+            precursor_charge = spectrum_dict['params']['charge'][0]
+            mz = spectrum_dict['m/z array']
+            intensity = spectrum_dict['intensity array']
+            retention_time = float(spectrum_dict['params']['rtinseconds'])
+            peptide = spectrum_dict['params']['seq']
+            # modifications = {6: 15.994915}
+            modifications = {}
+            
+            # Create the MS/MS spectrum.
+            spectra.append(sus.MsmsSpectrum(identifier, precursor_mz,
+                                            precursor_charge, mz, intensity,
+                                            retention_time=retention_time,
+                                            peptide=peptide,
+                                            modifications=modifications)
+                           .filter_intensity(0.01, 50)
+                           # .scale_intensity('root')
+                           .annotate_peptide_fragments(0.5, 'Da', ion_types='aby'))
+            
+        fig, ax = plt.subplots(figsize=(12, 6))
+        plt.title(identifier)
+        spectrum_top, spectrum_bottom = spectra
+        sup.mirror(spectrum_top, spectrum_bottom, ax=ax)
+        fig.savefig(plot_dir+'/{}.png'.format(re.sub('/','_',identifier)))
+        # plt.show()
+        # plt.close()
+
+
+def peplist_from_csv(csvfile):
+    peptidelist = []
+    with open (csvfile, 'r') as f:
+        f.readline()
+        for line in f:
+            seq, ce, charge = line.rstrip('\n').split(',')
+            peptide = seq + '/' + charge + '_' + str(round(float(ce),1)) + '_' + '0'
+            peptidelist.append(peptide)
+    return (peptidelist)
+    
+    
+    
+if __name__ == "__main__":
+    os.chdir(constants.BASE_PATH + 'project/prosit/local_training')
+    data_dir = constants.DATA_DIR
+    example_dir = constants.EXAMPLE_DIR
+    plot_dir = constants.PLOT_DIR
+    if not os.path.exists(plot_dir):
+        os.makedirs(plot_dir)
+    
+    peplist = peplist_from_csv(example_dir + '/peptidelist.csv')[:5]
+    mirroplot_twosets(peplist, example_dir+'peptidelist.mgf', \
+                      example_dir+'human_synthetic_hcd_selected.mgf', plot_dir)
+        
+        
+        
+        

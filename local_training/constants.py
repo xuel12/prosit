@@ -1,9 +1,13 @@
 BASE_PATH = "/Users/xuel12/Documents/MSdatascience/CS7180AI/"
+DATA_DIR = BASE_PATH + "project/data/"
 DATA_PATH = BASE_PATH + "project/data/traintest_hcd_100k.hdf5"
 MODEL_SPECTRA = BASE_PATH+"project/model_spectra/"
 MODEL_IRT = BASE_PATH+"project/model_irt/"
 OUT_DIR = BASE_PATH+"project/prediction/"
 MODEL_DIR = MODEL_SPECTRA
+EXAMPLE_DIR = BASE_PATH + "project/examples/"
+PLOT_DIR = BASE_PATH + "project/examples/plot"
+
 
 #DATA_PATH = "/root/data.hdf5"
 #MODEL_SPECTRA = "/root/model_spectra/"
