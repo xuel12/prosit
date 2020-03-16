@@ -138,6 +138,7 @@ def mirroplot_twosets(peplist, pred_file, ref_file, plot_dir):
         spectrum_top, spectrum_bottom = spectra
         sup.mirror(spectrum_top, spectrum_bottom, ax=ax)
         fig.savefig(plot_dir+'/{}.png'.format(re.sub('/','_',identifier)))
+        plt.close(fig)
         # plt.show()
         # plt.close()
 

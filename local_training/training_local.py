@@ -1,17 +1,30 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Thu Mar 1 20:51:37 2020
+
+@author: xuel12
+"""
+
 import os
-os.chdir('/Users/xuel12/Documents/MSdatascience/CS7180AI/project/prosit/local_training')
+import keras
+from keras.utils import plot_model
+import matplotlib.pyplot as plt
+import numpy as np
+from contextlib import redirect_stdout
+import time
+
+try: 
+    os.chdir('/Users/xuel12/Documents/MSdatascience/CS7180AI/project/prosit/local_training')
+    print("Target path not found, current is {}".format(os.getcwd()))
+except: 
+    print("Something wrong with specified directory. Exception- ", sys.exc_info())
+          
 import constants
 import io_local
 import losses
 import model as model_lib
-
-from keras.utils import plot_model
-import matplotlib.pyplot as plt
-import numpy as np
-import keras
-from contextlib import redirect_stdout
-import time
-
+    
 class TrainingPlot(keras.callbacks.Callback):
     def __init__(self, result_dir):
         self.result_dir = result_dir
@@ -102,8 +115,10 @@ def train(tensor, model, model_config, callbacks):
 
         
 if __name__ == "__main__":
+
     os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"  # turn off tf logging
     os.chdir(constants.BASE_PATH + 'project/prosit/local_training')
+        
     data_path = constants.DATA_PATH
     model_dir = constants.MODEL_DIR
     model, model_config = model_lib.load(model_dir, trained=False)
