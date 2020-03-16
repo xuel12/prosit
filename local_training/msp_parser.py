@@ -286,7 +286,7 @@ def sampling_peptidelist(n_record, ifile, ofile):
     peptidelist_nomod = [x for x in peptidelist if re.search('/',x) is not None]
     peptidelist_sample = random.sample(peptidelist_nomod, n_record)
     with open (ofile, 'w') as f:
-        f.write('modified_sequence,collision_energy,charge\n')
+        f.write('modified_sequence,collision_energy,precursor_charge\n')
         for peptide in peptidelist_sample:
             modseq, ce, mod = peptide.split('_')
             seq, charge = modseq.split('/')
