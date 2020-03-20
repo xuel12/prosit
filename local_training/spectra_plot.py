@@ -7,6 +7,7 @@ Created on Fri Mar 13 22:50:49 2020
 """
 import os
 os.chdir('/Users/xuel12/Documents/MSdatascience/CS7180AI/project/prosit/local_training')
+import matplotlib
 import matplotlib.pyplot as plt
 import spectrum_utils.plot as sup
 import spectrum_utils.spectrum as sus

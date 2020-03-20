@@ -1,31 +1,17 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Mar 1 20:51:37 2020
-
-@author: xuel12
-"""
-
-import os
-import sys
-import keras
-from keras.utils import plot_model
-import matplotlib.pyplot as plt
-import numpy as np
-from contextlib import redirect_stdout
-import time
-
-try: 
-    os.chdir('/Users/xuel12/Documents/MSdatascience/CS7180AI/project/prosit/local_training')
-    print("Current directory is {}".format(os.getcwd()))
-except: 
-    print("Something wrong with specified directory. Exception- ", sys.exc_info())
-          
-import constants
 import io_local
 import losses
 import model as model_lib
-    
+import constants
+import constants_gcp
+
+import os
+from keras.utils import plot_model
+import matplotlib.pyplot as plt
+import numpy as np
+import keras
+from contextlib import redirect_stdout
+import time
+
 class TrainingPlot(keras.callbacks.Callback):
     def __init__(self, result_dir):
         self.result_dir = result_dir
@@ -81,14 +67,15 @@ def get_callbacks(model_dir_path, result_dir):
         model_dir_path, epoch_format, loss_format
     )
     csvlog_file = "{}/training.log".format(result_dir)
-    tensorboard = keras.callbacks.TensorBoard(log_dir='{}/tensorboardlogs'.format(result_dir), histogram_freq=1)
+#    tensorboard = keras.callbacks.TensorBoard(log_dir='{}/tensorboardlogs'.format(result_dir), histogram_freq=1)
     save = keras.callbacks.ModelCheckpoint(weights_file, save_best_only=True)
     stop = keras.callbacks.EarlyStopping(patience=10)
     decay = keras.callbacks.ReduceLROnPlateau(patience=2, factor=0.2)
     csv_logger = keras.callbacks.CSVLogger(csvlog_file, append=False)
     plot_losses = TrainingPlot(result_dir)
 
-    return [save, stop, decay, csv_logger, plot_losses, tensorboard]
+#    return [save, stop, decay, csv_logger, plot_losses, tensorboard]
+    return [save, stop, decay, csv_logger, plot_losses]
 
 
 def train(tensor, model, model_config, callbacks):
@@ -116,12 +103,10 @@ def train(tensor, model, model_config, callbacks):
 
         
 if __name__ == "__main__":
-
     os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"  # turn off tf logging
-    os.chdir(constants.BASE_PATH + 'project/prosit/local_training')
-        
-    data_path = constants.DATA_PATH
-    model_dir = constants.MODEL_DIR
+    os.chdir(constants_gcp.BASE_PATH + 'project/prosit/local_training')
+    data_path = constants_gcp.DATA_PATH
+    model_dir = constants_gcp.MODEL_DIR
     model, model_config = model_lib.load(model_dir, trained=False)
    
     # create log folder
