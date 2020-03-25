@@ -67,15 +67,15 @@ def get_callbacks(model_dir_path, result_dir):
         model_dir_path, epoch_format, loss_format
     )
     csvlog_file = "{}/training.log".format(result_dir)
-#    tensorboard = keras.callbacks.TensorBoard(log_dir='{}/tensorboardlogs'.format(result_dir), histogram_freq=1)
+    tensorboard = keras.callbacks.TensorBoard(log_dir='{}/tensorboardlogs'.format(result_dir), histogram_freq=1)
     save = keras.callbacks.ModelCheckpoint(weights_file, save_best_only=True)
     stop = keras.callbacks.EarlyStopping(patience=10)
     decay = keras.callbacks.ReduceLROnPlateau(patience=2, factor=0.2)
     csv_logger = keras.callbacks.CSVLogger(csvlog_file, append=False)
     plot_losses = TrainingPlot(result_dir)
 
-#    return [save, stop, decay, csv_logger, plot_losses, tensorboard]
-    return [save, stop, decay, csv_logger, plot_losses]
+    return [save, stop, decay, csv_logger, plot_losses, tensorboard]
+#    return [save, stop, decay, csv_logger, plot_losses]
 
 
 def train(tensor, model, model_config, callbacks):

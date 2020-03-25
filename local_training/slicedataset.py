@@ -5,6 +5,10 @@ Spyder Editor
 This is a temporary script file.
 """
 
+import numpy as np
+import h5py
+
+
 def slice_hdf5(path, n_samples=None):
     import h5py
     import random  
@@ -63,26 +67,23 @@ def read_hdf5(path, n_samples=None):
         dataset_list = list(f.keys())
         for dset_name in dataset_list:
             print(dset_name)
-            print(f[dset_name][:10])
+            print(f[dset_name][:6])
 #            print(f[dset_name].dtype)
 #            print(f[dset_name].shape)
 #            if (len(f[dset_name].shape) == 2):
-#                print(f[dset_name][:2, :])
+#                print(f[dset_name][:5, :])
 #            elif (len(f[dset_name].shape) == 3):
-#                print(f[dset_name][:2, :, :])
+#                print(f[dset_name][:5, :, :])
 #            else:
-#                print(f[dset_name][:2, ])
+#                print(f[dset_name][:5, ])
         f.close()
 
     return dataset_list
 
-read_hdf5('/Users/xuel12/Documents/MSdatascience/CS7180AI/project/data/traintest_hcd_10k.hdf5')
-
-import numpy as np
+f = read_hdf5('/Users/xuel12/Documents/MSdatascience/CS7180AI/project/data/traintest_hcd_10k.hdf5')
 
 read_hdf5('/Users/xuel12/Documents/MSdatascience/CS7180AI/project/model_spectra/weight_32_0.10211.hdf5')
 
-import h5py
 f = h5py.File('/Users/xuel12/Documents/MSdatascience/CS7180AI/project/model_spectra/weight_32_0.10211.hdf5', 'r')
 list(f.keys())
 dset = f['model_weights']
