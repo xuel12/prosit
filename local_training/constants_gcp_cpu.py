@@ -1,4 +1,4 @@
-BASE_PATH = "/home/xuel12/"
+BASE_PATH = "/home/xuel12/prosit/"
 DATA_DIR = BASE_PATH + "project/data/"
 DATA_PATH = BASE_PATH + "project/data/traintest_hcd_100k.hdf5"
 MODEL_SPECTRA = BASE_PATH+"project/model_spectra_cpu/"
