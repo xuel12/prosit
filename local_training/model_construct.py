@@ -328,7 +328,7 @@ def model_build_seq2seq(modelfile, weightfile):
 def model_build_LSTM(modelfile, weightfile):
     from keras.models import Model
     from keras.layers import Input, LeakyReLU, Flatten, Dense, Dropout
-    from keras.layers import Concatenate, Embedding, GRU, Bidirectional,SimpleRNN,LSTM
+    from keras.layers import Concatenate, Embedding, GRU, Bidirectional,SimpleRNN,LSTM,CuDNNLSTM
     from keras.layers import RepeatVector, TimeDistributed, Multiply, Permute
 
     # fix random seed for reproducibility
@@ -341,7 +341,7 @@ def model_build_LSTM(modelfile, weightfile):
     # this embedding layer will encode the input sequence into a sequence of dense 32-dimensional vectors.
     peptides_in = Input(shape=(peplen,), dtype='int32', name='peptides_in')
     embedding = Embedding(max_features, 32, name='embedding')(peptides_in)
-    encoder1 = LSTM(512, return_sequences=True, name = 'encoder1')(embedding)
+    encoder1 = CuDNNLSTM(512, return_sequences=True, name = 'encoder1')(embedding)
 #    dropout_1 = Dropout(0.3, name = 'dropout_1')(encoder1)
 #    encoder2 = LSTM(512, return_sequences=True, name = 'encoder2')(dropout_1)
     dropout_2 = Dropout(0.3, name = 'dropout_2')(encoder1)
@@ -356,7 +356,7 @@ def model_build_LSTM(modelfile, weightfile):
     # combine seq, charge, ce embedding
     add_meta = Multiply(name='add_meta')([encoder_att, meta_dense_do])
     repeat = RepeatVector(29, name='repeat')(add_meta)
-    decoder = LSTM(512, return_sequences=True, name = 'decoder')(repeat)
+    decoder = CuDNNLSTM(512, return_sequences=True, name = 'decoder')(repeat)
     dropout_3 = Dropout(0.3, name = 'dropout_3')(decoder)
     
     permute_1 = Permute((2, 1), name = 'permute_1')(dropout_3)
