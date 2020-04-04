@@ -79,7 +79,7 @@ def get_callbacks(model_dir_path, result_dir):
 
 
 def train(tensor, model, model_config, callbacks):
-#    import keras
+    import keras
 
     if isinstance(model_config["loss"], list):
         loss = [losses.get(l) for l in model_config["loss"]]
