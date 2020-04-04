@@ -271,7 +271,7 @@ def model_build_mlp(modelfile, weightfile):
 def model_build_seq2seq(modelfile, weightfile):
     from keras.models import Model
     from keras.layers import Input, LeakyReLU, Flatten, Dense, Dropout
-    from keras.layers import Concatenate, Embedding, GRU, Bidirectional,SimpleRNN
+    from keras.layers import Concatenate, Embedding, GRU, Bidirectional,SimpleRNN,LSTM
     from keras.layers import RepeatVector, TimeDistributed, Multiply, Permute
 
     # fix random seed for reproducibility
@@ -292,15 +292,20 @@ def model_build_seq2seq(modelfile, weightfile):
     meta_dense_do = Dense(32, name='meta_dense_do')(meta_dense)
     add_meta = Multiply(name='add_meta')([embedding, meta_dense_do])
 
-#    encoder1 = Bidirectional(GRU(128, return_sequences=True, name = 'encoder1_gru'), name='encoder1')(add_meta)
-    encoder1 = GRU(512, return_sequences=True, name = 'encoder1_gru')(add_meta)
+#    encoder1 = Bidirectional(GRU(256, return_sequences=True, name = 'encoder1_gru'), name='encoder1')(add_meta)
+    encoder1 = Bidirectional(LSTM(256, return_sequences=True, name = 'encoder1_lstm'), name='encoder1')(add_meta)
+#    encoder1 = GRU(512, return_sequences=True, name = 'encoder1_gru')(add_meta)
+#    encoder1 = LSTM(512, return_sequences=True, name = 'encoder1_lstm')(add_meta)
 #    encoder1 = SimpleRNN(512, return_sequences=True, name = 'encoder1_rnn')(add_meta)
 
     dropout_1 = Dropout(0.3, name = 'dropout_1')(encoder1)
     encoder_att = Attention(name='encoder_att')(dropout_1)
 
     repeat = RepeatVector(29, name='repeat')(encoder_att)
-    decoder = GRU(512, return_sequences=True, name = 'decoder')(repeat)
+#    decoder = Bidirectional(GRU(256, return_sequences=True, name = 'decoder_gru'), name='decoder')(repeat)
+    decoder = Bidirectional(LSTM(256, return_sequences=True, name = 'decoder_lstm'), name='decoder')(repeat)
+#    decoder = GRU(512, return_sequences=True, name = 'decoder')(repeat)
+#    decoder = LSTM(512, return_sequences=True, name = 'decoder')(repeat)
 #    decoder = SimpleRNN(512, return_sequences=True, name = 'decoder')(repeat)
 
 #    
@@ -320,6 +325,54 @@ def model_build_seq2seq(modelfile, weightfile):
     
     return model
 
+def model_build_LSTM(modelfile, weightfile):
+    from keras.models import Model
+    from keras.layers import Input, LeakyReLU, Flatten, Dense, Dropout
+    from keras.layers import Concatenate, Embedding, GRU, Bidirectional,SimpleRNN,LSTM
+    from keras.layers import RepeatVector, TimeDistributed, Multiply, Permute
+
+    # fix random seed for reproducibility
+    seed = 100
+    numpy.random.seed(seed)
+    
+    peplen = 30
+    max_features = 22
+        
+    # this embedding layer will encode the input sequence into a sequence of dense 32-dimensional vectors.
+    peptides_in = Input(shape=(peplen,), dtype='int32', name='peptides_in')
+    embedding = Embedding(max_features, 32, name='embedding')(peptides_in)
+    encoder1 = LSTM(512, return_sequences=True, name = 'encoder1')(embedding)
+#    dropout_1 = Dropout(0.3, name = 'dropout_1')(encoder1)
+#    encoder2 = LSTM(512, return_sequences=True, name = 'encoder2')(dropout_1)
+    dropout_2 = Dropout(0.3, name = 'dropout_2')(encoder1)
+    encoder_att = Attention(name='encoder_att')(dropout_2)
+
+    collision_energy_in = Input(shape=(1,), dtype='float32', name='collision_energy_in')
+    precursor_charge_in = Input(shape=(6,), dtype='float32', name='precursor_charge_in')
+    meta_in = Concatenate(axis=-1, name='meta_in')([collision_energy_in, precursor_charge_in])
+    meta_dense = Dense(512, name='meta_dense')(meta_in)
+    meta_dense_do = Dropout(0.3, name = 'meta_dense_do')(meta_dense)
+
+    # combine seq, charge, ce embedding
+    add_meta = Multiply(name='add_meta')([encoder_att, meta_dense_do])
+    repeat = RepeatVector(29, name='repeat')(add_meta)
+    decoder = LSTM(512, return_sequences=True, name = 'decoder')(repeat)
+    dropout_3 = Dropout(0.3, name = 'dropout_3')(decoder)
+    
+    permute_1 = Permute((2, 1), name = 'permute_1')(dropout_3)
+    dense_1 = Dense(29, activation='softmax', name='dense_1')(permute_1)
+    permute_2 = Permute((2, 1), name = 'permute_2')(dense_1)
+    
+    multiply_1 = Multiply(name='multiply_1')([dropout_3, permute_2])
+    timedense = TimeDistributed(Dense(6, name='dense_2'), name='timedense')(multiply_1)
+    activation = LeakyReLU(alpha=0.3, name = 'activation')(timedense) # names are added here
+    out = Flatten(name='out')(activation)
+
+    model = Model(input=[peptides_in, precursor_charge_in, collision_energy_in], output=[out], name='model_1')
+    model.summary()
+    
+    return model
+
 
 if __name__ == "__main__":
     
@@ -331,7 +384,7 @@ if __name__ == "__main__":
     
     model, config = load(model_dir, trained=False)
 #    model = model_build_biGRU(model_dir + MODEL_NAME, model_dir + WEIGHT_NAME)
-    model = model_build_seq2seq(model_dir + MODEL_NAME, model_dir + WEIGHT_NAME)
+    model = model_build_LSTM(model_dir + MODEL_NAME, model_dir + WEIGHT_NAME)
 
     save(model, config, model_dir+'/tmpmodel')
     
