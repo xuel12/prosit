@@ -10,7 +10,7 @@ flask==1.1.1
 pandas==0.24.1
 pyteomics==4.1.2
 lxml==4.4.1
-tensorboard
+tensorboard==1.15.0
 matplotlib
 graphviz
 pydot
